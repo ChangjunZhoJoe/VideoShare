@@ -1,15 +1,21 @@
-import logo from './logo.svg';
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { v4 as uuidv4 } from 'uuid';
 
 
 import Button from '@material-ui/core/Button';
 
 function App() {
-  const [isRecording, setRecordingBool] = useState(false)
-  function showWebCam(){
-    setRecordingBool(true)
+  const [isRecording, setIsRecording] = useState(false)
+  const [isDoneRecording, setIsDoneRecording] = useState(false)
+
+  const [stream, setStream] = useState({})
+  const [mediaRecorder, setMediaRecorder] = useState({})
+  const [recordedMedia, setRecordedMedia] = useState({})
+  useEffect(()=>{
+    setupWebCam();
+  },[]);
+
+  function setupWebCam(){
     var videoElement = document.getElementById('video')
     var audioSelect = document.querySelector('select#audioSource')
     var videoSelect = document.querySelector('select#videoSource')
@@ -43,7 +49,7 @@ function App() {
     function getStream() {
       if (window.stream) {
         window.stream.getTracks().forEach(track => {
-          track.stop();
+          track.stop()
         });
       }
       const audioSource = audioSelect.value;
@@ -54,7 +60,8 @@ function App() {
       };
       return navigator.mediaDevices.getUserMedia(constraints)
         .then((stream)=>{
-          startRecording(stream)
+          console.log(stream)
+          setStream(stream)
           gotStream(stream)
         }).catch(handleError);
     }
@@ -80,70 +87,78 @@ function App() {
         track.stop();
       });
     }
-    setRecordingBool(false)
   }
 
   function uploadVideo(){
-
+    
   }
 
-  function startRecording(videoStream){
-    // Optional frames per second argument.
-
+  function startRecording(){
+    setIsRecording(true)
     var options = { mimeType: "video/webm; codecs=vp9" };
-    console.log(videoStream)
-    const mediaRecorder = new MediaRecorder(videoStream, options);
-
+    const mediaRecorder = new MediaRecorder(stream, options);
+    setMediaRecorder(mediaRecorder);
     mediaRecorder.ondataavailable = handleDataAvailable;
     mediaRecorder.start();
 
     function handleDataAvailable(event) {
       if (event.data.size > 0) {
-        document.getElementById('videoreplay').src = window.URL.createObjectURL(event.data);
+        setRecordedMedia(event.data);
+        var videoElement = document.getElementById('videoreplay');
+        videoElement.src = window.URL.createObjectURL(event.data);
         // document.getElementById('videoreplay').srcObject = event.data
       } 
     }
-
-    setTimeout(()=>{
-      if(mediaRecorder.state === "recording"){
-        mediaRecorder.stop();
-      }
-    },2000)
   }
 
   function playRecording(){
-    // console.log(mediaRecorder)
-    // if(mediaRecorder.state === "recording"){
-    //   mediaRecorder.stop();
-    // }
+    var videoElement = document.getElementById('videoreplay')
+    videoElement.currentTime = 0;
+    videoElement.play();
   }
 
+  function handleStopRecording(){
+    stopAllTracks()
+    setIsRecording(false)
+    setIsDoneRecording(true)
+    mediaRecorder.stop()
+  }
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        {/* <img src={logo} className="App-logo" alt="logo" /> */}
         <p>
           WELCOME TO VIDEO QUEST DEMO
         </p>
         {
           isRecording?  
           <> 
-          <Button variant="contained" color="primary" disableElevation onClick={stopAllTracks}>
-            Stop recording and Upload to get a url for your video
-          </Button>
-          <Button variant="contained" color="primary" disableElevation onClick={playRecording}>
-            Play recording
+          <Button variant="contained" color="primary" disableElevation onClick={handleStopRecording}>
+            Stop recording 
           </Button>
           </>:
-          <Button variant="contained" color="primary" disableElevation onClick={()=>{showWebCam()}}>
+          <Button variant="contained" color="primary" disableElevation onClick={startRecording}>
             Start recording
           </Button>
+        }
+        {
+          isDoneRecording?
+          <>
+          <Button variant="contained" color="primary" disableElevation onClick={playRecording}>
+          Play recording
+          </Button>
+          <Button variant="contained" color="primary" disableElevation>
+          uploadVideo
+          </Button>
+          </>
+          :
+          <></>
         }
         <select id="audioSource"></select>
         <select id="videoSource"></select>
         <video autoPlay={true} id="video" style={{transform:'rotateY(180deg)'}}/>
-        <video autoPlay={true} id="videoreplay" style={{transform:'rotateY(180deg)'}}/>
+        <video autoPlay={false} id="videoreplay" style={{transform:'rotateY(180deg)'}}/>
       </header>
     </div>
   );

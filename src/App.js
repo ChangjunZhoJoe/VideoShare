@@ -90,22 +90,36 @@ function App() {
   }
 
   function uploadVideo(){
-    
+    // let formData = new FormData();
+    // formData.append("photo", new File([recordedMedia], "file_name",{type: 'video/webm;codecs=vp9'}))
+    fetch('https://10wpx9p3rh.execute-api.ap-northeast-1.amazonaws.com/videosharetest1/uploadvideo',{
+      method: 'POST',
+      headers:{
+        'Access-Control-Allow-Origin':'*',
+        'Content-Type': 'video/webm',
+      },
+      mode:'cors',
+      body:  new File([recordedMedia], "file_name",{type: 'video/webm;codecs=vp9'})
+    })
+    .then(res=>res.json())
+    .then((data)=>{
+      console.log(data)
+    })
   }
 
   function startRecording(){
     setIsRecording(true)
-    var options = { mimeType: "video/webm; codecs=vp9" };
-    const mediaRecorder = new MediaRecorder(stream, options);
-    setMediaRecorder(mediaRecorder);
-    mediaRecorder.ondataavailable = handleDataAvailable;
-    mediaRecorder.start();
+    var options = { mimeType: "video/webm; codecs=vp9" }
+    const mediaRecorder = new MediaRecorder(stream, options)
+    setMediaRecorder(mediaRecorder)
+    mediaRecorder.ondataavailable = handleDataAvailable
+    mediaRecorder.start()
 
     function handleDataAvailable(event) {
       if (event.data.size > 0) {
-        setRecordedMedia(event.data);
-        var videoElement = document.getElementById('videoreplay');
-        videoElement.src = window.URL.createObjectURL(event.data);
+        setRecordedMedia(event.data)
+        var videoElement = document.getElementById('videoreplay')
+        videoElement.src = window.URL.createObjectURL(event.data)
         // document.getElementById('videoreplay').srcObject = event.data
       } 
     }
@@ -148,7 +162,7 @@ function App() {
           <Button variant="contained" color="primary" disableElevation onClick={playRecording}>
           Play recording
           </Button>
-          <Button variant="contained" color="primary" disableElevation>
+          <Button variant="contained" color="primary" disableElevation onClick={uploadVideo}>
           uploadVideo
           </Button>
           </>

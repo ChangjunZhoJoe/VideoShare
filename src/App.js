@@ -104,6 +104,7 @@ function App() {
     .then(res=>res.json())
     .then((res)=>{
       console.log(res)
+      document.getElementById('url').innerHTML = 'https://videoshareprocessedfootages.s3-ap-northeast-1.amazonaws.com/'+res.headerStreamingFileName
       fetch(res.uploadURL,{
           method: 'PUT',
           headers:{
@@ -184,6 +185,10 @@ function App() {
         <video autoPlay={true} muted id="video" style={{transform:'rotateY(180deg)'}}/>
         <video autoPlay={false} id="videoreplay" style={{transform:'rotateY(180deg)'}}/>
       </header>
+      <div>
+        <p>Here is your URL: </p>
+        <p id="url"></p>
+      </div>
     </div>
   );
 }

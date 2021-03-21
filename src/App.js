@@ -4,6 +4,16 @@ import './App.css';
 
 import Button from '@material-ui/core/Button';
 
+const blobToBase64 = blob => {
+  const reader = new FileReader();
+  reader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    reader.onloadend = () => {
+      resolve(reader.result);
+    };
+  });
+};
+
 function App() {
   const [isRecording, setIsRecording] = useState(false)
   const [isDoneRecording, setIsDoneRecording] = useState(false)
@@ -55,7 +65,7 @@ function App() {
       const audioSource = audioSelect.value;
       const videoSource = videoSelect.value;
       const constraints = {
-        // audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
+        audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
         video: {deviceId: videoSource ? {exact: videoSource} : undefined}
       };
       return navigator.mediaDevices.getUserMedia(constraints)
@@ -68,8 +78,8 @@ function App() {
     
     function gotStream(stream) {
       window.stream = stream; // make stream available to console
-      // audioSelect.selectedIndex = [...audioSelect.options]
-      //   .findIndex(option => option.text === stream.getAudioTracks()[0].label);
+      audioSelect.selectedIndex = [...audioSelect.options]
+        .findIndex(option => option.text === stream.getAudioTracks()[0].label);
       videoSelect.selectedIndex = [...videoSelect.options]
         .findIndex(option => option.text === stream.getVideoTracks()[0].label);
       
@@ -90,20 +100,20 @@ function App() {
   }
 
   function uploadVideo(){
-    // let formData = new FormData();
-    // formData.append("photo", new File([recordedMedia], "file_name",{type: 'video/webm;codecs=vp9'}))
-    fetch('https://10wpx9p3rh.execute-api.ap-northeast-1.amazonaws.com/videosharetest1/uploadvideo',{
-      method: 'POST',
-      headers:{
-        'Access-Control-Allow-Origin':'*',
-        'Content-Type': 'video/webm',
-      },
-      mode:'cors',
-      body:  new File([recordedMedia], "file_name",{type: 'video/webm;codecs=vp9'})
-    })
+    fetch('https://qjd1jdbrda.execute-api.ap-northeast-1.amazonaws.com/default/videoshare_upload_getpresignedurl')
     .then(res=>res.json())
-    .then((data)=>{
-      console.log(data)
+    .then((res)=>{
+      console.log(res)
+      fetch(res.uploadURL,{
+          method: 'PUT',
+          headers:{
+            'Access-Control-Allow-Origin':'*',
+            'Content-Type':'video/webm'
+          },
+          body: recordedMedia
+      }).then((res)=>{
+        console.log(res)
+      }) 
     })
   }
 
@@ -171,7 +181,7 @@ function App() {
         }
         <select id="audioSource"></select>
         <select id="videoSource"></select>
-        <video autoPlay={true} id="video" style={{transform:'rotateY(180deg)'}}/>
+        <video autoPlay={true} muted id="video" style={{transform:'rotateY(180deg)'}}/>
         <video autoPlay={false} id="videoreplay" style={{transform:'rotateY(180deg)'}}/>
       </header>
     </div>

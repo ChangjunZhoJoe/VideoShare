@@ -109,6 +109,7 @@ function VideoRecorder() {
                     },
                     body: recordedMedia,
                 }).then((res) => {
+                    console.log("uploading done")
                     console.log(res);
                 });
             });

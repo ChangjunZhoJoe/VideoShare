@@ -181,17 +181,20 @@ function VideoRecorderPage() {
                     )}
                 <select id="audioSource"></select>
                 <select id="videoSource"></select>
-                <video
-                    autoPlay={true}
-                    muted
-                    id="video"
-                    // style={{ transform: "rotateY(180deg)" }}
-                />
-                <video
-                    autoPlay={false}
-                    id="videoreplay"
-                    // style={{ transform: "rotateY(180deg)" }}
-                />
+                <div>
+                    <video
+                        autoPlay={true}
+                        muted
+                        id="video"
+                    />
+                </div>
+                <div tabIndex={-1}>
+                    <video
+                        tabIndex={-1}
+                        autoPlay={false}
+                        id="videoreplay"
+                    />
+                </div>
                 {isDoneRecording ? (
                     <>
                         <Button

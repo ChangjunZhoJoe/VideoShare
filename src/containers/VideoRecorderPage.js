@@ -111,12 +111,12 @@ function VideoRecorderPage() {
     }
 
     function uploadVideo() {
+        setIsShowUploadModal(true);
         fetch(
             "https://qjd1jdbrda.execute-api.ap-northeast-1.amazonaws.com/default/videoshare_upload_getpresignedurl"
         )
             .then((res) => res.json())
             .then((res) => {
-                setIsShowUploadModal(true);
                 showShareLink(res.headerStreamingFileName)
                 fetch(res.uploadURL, {
                     method: "PUT",
@@ -152,11 +152,13 @@ function VideoRecorderPage() {
     }
 
     return (
-        <div className="App">
-            <header className="App-header">
-                {/* <img src={logo} className="App-logo" alt="logo" /> */}
-                <p style={{fontSize:'3em'}}>VideoShare</p>
-                <p>Record your video, and share it with a link</p>
+        <header className="App-header">
+            {/* <img src={logo} className="App-logo" alt="logo" /> */}
+            <div style={{position:"absolute",left:"20px",top:"-40px"}}>
+                <p style={{fontSize:'2em'}}>VideoShare</p>
+                <p style={{fontSize:"0.8em"}}>Record your video, and share it with a link</p>
+            </div>
+            <div>
                 {
                     isRecording ? (
                         <>
@@ -226,11 +228,10 @@ function VideoRecorderPage() {
                         :
                         <></>
                 }
-                <UploadModal open={isShowUploadModal} content={UploadModalContent}></UploadModal>
-                <p>Our site only supports chrome desktop now, new version will be released soon for other browsers and mobiles</p>
-            </header>
-        </div>
-        
+            </div>
+            <UploadModal open={isShowUploadModal} content={UploadModalContent}></UploadModal>
+            <p style={{fontSize:"0.8em"}}>Our site only supports chrome desktop now, new version will be released soon for other browsers and mobiles</p>
+        </header>
     );
 }
 

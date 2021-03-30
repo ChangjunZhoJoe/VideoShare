@@ -1,6 +1,6 @@
 import React from "react";
-import VideoRecorder from "./videorecorder";
-import PlayVideoPage from "./components/playvideopage";
+import VideoRecorderPage from "./containers/VideoRecorderPage";
+import PlayVideoPage from "./containers/PlayVideoPage";
 import { HashRouter, Switch, Route } from "react-router-dom";
 
 
@@ -10,7 +10,7 @@ export default function App(){
             <HashRouter>
                 <Switch>
                     <Route path="/play" component={PlayVideoPage} />
-                    <Route path="/" component={VideoRecorder} />
+                    <Route path="/" component={VideoRecorderPage} />
                 </Switch>
             </HashRouter>
         </React.StrictMode>

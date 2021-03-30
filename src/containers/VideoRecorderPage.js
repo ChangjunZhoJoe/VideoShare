@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
-import Button from "@material-ui/core/Button";
-import './App.css'
+import '../styles/App.css'
 
-function VideoRecorder() {
+import Button from '@material-ui/core/Button';
+
+import UploadModal from '../components/UploadModal'
+
+function VideoRecorderPage() {
     const [isRecording, setIsRecording] = useState(false);
     const [isDoneRecording, setIsDoneRecording] = useState(false);
-
-    // const [stream, setStream] = useState({});
     const [mediaRecorder, setMediaRecorder] = useState({})
     const [recordedMedia, setRecordedMedia] = useState({})
     const [uploadDone, setUploadDone] = useState(false)
-    useEffect(() => {
+    const [isShowUploadModal, setIsShowUploadModal] = useState(false)
+    const [UploadModalContent, setUploadModalContent] = useState("Uploading your video, this might takes a while")
+    useEffect(() => { 
         setupWebCam()
     }, []);
 
@@ -113,7 +116,7 @@ function VideoRecorder() {
         )
             .then((res) => res.json())
             .then((res) => {
-                console.log(res);
+                setIsShowUploadModal(true);
                 showShareLink(res.headerStreamingFileName)
                 fetch(res.uploadURL, {
                     method: "PUT",
@@ -122,10 +125,11 @@ function VideoRecorder() {
                         "Content-Type": "video/webm",
                     },
                     body: recordedMedia,
-                }).then((res) => {
-                    console.log("uploading done")
-                    console.log(res);
-                })
+                }).then(() => {
+                    setIsShowUploadModal(false);
+                }).catch(function(error) {
+                    setUploadModalContent("Upload Fail"+error)
+                });
             })
     }
 
@@ -152,17 +156,7 @@ function VideoRecorder() {
             <header className="App-header">
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
                 <p style={{fontSize:'3em'}}>VideoShare</p>
-                <p>A simple platform to share recorded videos with a link</p>
-                <p>To start, simply click Start Recording</p>
-                {
-                    uploadDone? 
-                        <>
-                            <p style={{fontSize:'2em'}} >Share your video with:</p>
-                            <p id="url"></p>
-                        </>
-                        :
-                        <></>
-                }
+                <p>Record your video, and share it with a link</p>
                 {
                     isRecording ? (
                         <>
@@ -172,7 +166,7 @@ function VideoRecorder() {
                                 disableElevation
                                 onClick={handleStopRecording}
                             >
-                                Stop recording
+                                Done
                             </Button>
                         </>
                     ) : (
@@ -185,6 +179,19 @@ function VideoRecorder() {
                             Start recording
                         </Button>
                     )}
+                <select id="audioSource"></select>
+                <select id="videoSource"></select>
+                <video
+                    autoPlay={true}
+                    muted
+                    id="video"
+                    // style={{ transform: "rotateY(180deg)" }}
+                />
+                <video
+                    autoPlay={false}
+                    id="videoreplay"
+                    // style={{ transform: "rotateY(180deg)" }}
+                />
                 {isDoneRecording ? (
                     <>
                         <Button
@@ -207,19 +214,16 @@ function VideoRecorder() {
                 ) : (
                     <></>
                 )}
-                <select id="audioSource"></select>
-                <select id="videoSource"></select>
-                <video
-                    autoPlay={true}
-                    muted
-                    id="video"
-                    // style={{ transform: "rotateY(180deg)" }}
-                />
-                <video
-                    autoPlay={false}
-                    id="videoreplay"
-                    // style={{ transform: "rotateY(180deg)" }}
-                />
+                {
+                    uploadDone? 
+                        <>
+                            <p style={{fontSize:'2em'}} >Share your video with:</p>
+                            <p id="url"></p>
+                        </>
+                        :
+                        <></>
+                }
+                <UploadModal open={isShowUploadModal} content={UploadModalContent}></UploadModal>
                 <p>Our site only supports chrome desktop now, new version will be released soon for other browsers and mobiles</p>
             </header>
         </div>
@@ -227,4 +231,6 @@ function VideoRecorder() {
     );
 }
 
-export default VideoRecorder;
+export default VideoRecorderPage;
+
+

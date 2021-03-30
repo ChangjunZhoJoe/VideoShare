@@ -1,5 +1,5 @@
 import React from 'react';
-import VideoPlayer from './videoplayer'
+import VideoPlayer from '../components/VideoPlayer'
 
 
 function getVideoIDFromQuery(s){

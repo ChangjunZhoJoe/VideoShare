@@ -1,6 +1,7 @@
 import React from 'react';
 import VideoPlayer from '../components/VideoPlayer'
 
+import '../styles/VideoPlayer.css'
 
 function getVideoIDFromQuery(s){
     //assume the link quert parameter is ?video={videoID}
@@ -17,9 +18,9 @@ export default function PlayVideoPage (props){
 
     let videoJsOptions = {
         autoplay: true,
-        controls: false,
-        controlBar:false,
-        textTrackSettings: false,
+        controls: true,
+        // controlBar:false,
+        // textTrackSettings: false,
         sources: [{
             src: s3VideoLink,
             type: 'application/x-mpegURL'
@@ -27,11 +28,10 @@ export default function PlayVideoPage (props){
     }
 
     return (
-        <div>	
+        <div className="VideoPlayer-body">	
             {/* <header className="App-header"> */}
             <VideoPlayer { ...videoJsOptions } />
             {/* </header> */}
         </div>
     )
-    
 }

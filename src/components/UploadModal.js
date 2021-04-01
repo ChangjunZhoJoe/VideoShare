@@ -21,7 +21,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UploadModal(props) {
     const classes = useStyles();
-    const { open, content } = props
+    const { open, content, setOpen, progressBar } = props
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
         <div>
@@ -30,18 +34,22 @@ export default function UploadModal(props) {
                 aria-describedby="transition-modal-description"
                 className={classes.modal}
                 open={open}
+                onClose={handleClose}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{
                     timeout: 500,
                 }}
             >
-                <Fade in={open}>
-                    <div className={classes.paper}>
-                        <h2 id="transition-modal-title">{content}</h2>
-                        <UploadProgressBar />
-                    </div>
-                </Fade>
+                {progressBar?
+                    <Fade in={open}>
+                        <div className={classes.paper}>
+                            <h2 id="transition-modal-title">{content}</h2>
+                            <UploadProgressBar />
+                        </div>
+                    </Fade>:
+                    <></>
+                }
             </Modal>
         </div>
     );

@@ -168,11 +168,11 @@ function VideoRecorder() {
                         ) : (
                             <Button
                                 variant="contained"
-                                color="primary"
+                                color="secondary"
                                 disableElevation
                                 onClick={startRecording}
                             >
-                                Start recording
+                                Start Recording
                             </Button>
                         )}
                 </div>
@@ -200,15 +200,15 @@ function VideoRecorder() {
                             disableElevation
                             onClick={playRecording}
                         >
-                            Play recording
+                            Play Recording
                         </Button>
                         <Button
                             variant="contained"
-                            color="primary"
+                            color="secondary"
                             disableElevation
                             onClick={uploadVideo}
                         >
-                            uploadVideo
+                            Share Your Video
                         </Button>
                     </>
                 ) : (

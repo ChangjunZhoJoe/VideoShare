@@ -5,7 +5,7 @@
 
  VideoShare is a platform that allows you to record, upload and share your recorded video through a link. Designed with a purpose to help people send videos through email with a link.
  
- Try video share:
+ Try VideoShare:
  
           If you are in Asia: https://techzhou.me  
           
